@@ -1,6 +1,76 @@
-public class MedicalGUI {
- 
-          // the GUI will have two functions, inputting data to our database, and outputting an accurate appointment time based on the queueing algorithm we use
- 
- 
+package groupproject;
+
+import java.awt.LayoutManager;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import java.awt.CardLayout;
+import java.awt.BorderLayout;
+
+public class MedicalGUI /*implements ItemListener*/ {
+	
+	public MedicalGUI() {
+	
+	JFrame frame = new JFrame();
+	JPanel card = new JPanel(new CardLayout()); // Jpanel for card layout
+	String dataPanel = "Enter Patient Data"; // String for ComboBox, changing cards
+	String outputPanel = "Predicted Appointment Time";// String for ComboBox, changing cards 
+	JPanel dataEntry = new JPanel(); // JPanel that will allow user to input data
+	JPanel output = new JPanel(); // JPanel that will show appointment time prediction
+	JPanel comboBoxPane = new JPanel(); // 
+	String comboBoxItems[] = { dataPanel, outputPanel }; // string array for combobox
+	JComboBox cb = new JComboBox(comboBoxItems); 
+	card.add(dataEntry, dataPanel); // add the data entry and output panels to card
+	card.add(output, outputPanel);
+	comboBoxPane.add(cb);
+	
+	
+	JTextField arrived = new JTextField("Did the patient arrive?");
+	JTextField arrivalTime = new JTextField("Arrival Time");
+	JTextField appType = new JTextField("Appointment Type");
+	JTextField timeSeen = new JTextField("Time Seen");
+	JTextField timeFin = new JTextField("Time Finished");
+	JTextField timeOfYear = new JTextField("Time of Year");
+	JTextField natureOfComplaint = new JTextField("Nature of Complaint");
+	
+	dataEntry.add(arrived);
+	dataEntry.add(arrivalTime);
+	dataEntry.add(appType);
+	dataEntry.add(timeSeen);
+	dataEntry.add(timeFin);
+	dataEntry.add(timeOfYear);
+	dataEntry.add(natureOfComplaint);
+	
+	frame.add(comboBoxPane, BorderLayout.PAGE_START);
+	frame.add(card, BorderLayout.CENTER);
+	frame.setSize(400, 200);
+	frame.setVisible(true);
+	
+	}
+	
+	
+	
+	
+	public static void main (String [] args)
+	{
+		new MedicalGUI();
+	}
+
+
+
+
+	//@Override
+	/*public void itemStateChanged(ItemEvent e) {
+		
+		    CardLayout cl = (CardLayout)(card.getLayout());
+		    cl.show(card, (String)e.getItem());
+		
+		
+	}*/
 }
