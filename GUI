@@ -1,0 +1,6 @@
+public class MedicalGUI {
+ 
+          // the GUI will have two functions, inputting data to our database, and outputting an accurate appointment time based on the queueing algorithm we use
+ 
+ 
+}
