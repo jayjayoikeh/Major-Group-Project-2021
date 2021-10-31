@@ -1,0 +1,10 @@
+CREATE TABLE `patientinfo`.`patients` (
+Arrived varchar(255),
+ArrivalTime int,
+AppointType varchar(255),
+TimeSeen int,
+TimeLeft int,
+TimeOfYear int,
+NatureOfComplaint varchar(255)
+
+);
