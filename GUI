@@ -1,76 +1,249 @@
-package groupproject;
-
+import java.sql.Connection;  
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;  
+import java.sql.Statement;  
+import javax.swing.JOptionPane;  
 import java.awt.LayoutManager;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
-public class MedicalGUI /*implements ItemListener*/ {
+public class MedicalGUI  {
 	
-	public MedicalGUI() {
+	public MedicalGUI(){
 	
-	JFrame frame = new JFrame();
-	JPanel card = new JPanel(new CardLayout()); // Jpanel for card layout
-	String dataPanel = "Enter Patient Data"; // String for ComboBox, changing cards
-	String outputPanel = "Predicted Appointment Time";// String for ComboBox, changing cards 
-	JPanel dataEntry = new JPanel(); // JPanel that will allow user to input data
-	JPanel output = new JPanel(); // JPanel that will show appointment time prediction
-	JPanel comboBoxPane = new JPanel(); // 
-	String comboBoxItems[] = { dataPanel, outputPanel }; // string array for combobox
-	JComboBox cb = new JComboBox(comboBoxItems); 
-	card.add(dataEntry, dataPanel); // add the data entry and output panels to card
-	card.add(output, outputPanel);
-	comboBoxPane.add(cb);
+	JFrame frame = new JFrame(); // Frame that panels will be added to
+	
+	JPanel title = new JPanel(new GridLayout(1,1)); // Title Panel that contains Labels
+	JLabel bookings = new JLabel("Book an Appointment");
+	JLabel estimate = new JLabel("Get estimated appointment time");
+	title.add(bookings);
+	title.add(estimate); // add labels to title panel 
+	
+	JPanel panel = new JPanel(new GridLayout(7,7));  // JPanel for booking appointments
+	JLabel patientName = new JLabel("Patient Name:");
+	JTextField patName = new JTextField();
+	JLabel patientAge = new JLabel("Patient Age:"); // change to DOB
+	JTextField text1 = new JTextField();
+	JLabel patientAddress = new JLabel("Patient Address:");
+	JTextField text2 = new JTextField();
+	JLabel patientPhone = new JLabel("Phone Number:");
+	JTextField text3 = new JTextField();
+	JLabel appDate = new JLabel("Appointment Date");
+	JTextField text4 = new JTextField();
+	JLabel appoTime = new JLabel("Appointment Time");
+	JTextField text5 = new JTextField();
+	JLabel natureOfCom = new JLabel("Nature of Complaint");
+	JTextField text6 = new JTextField();
+	panel.add(patientName); // adding of labels and textfields for appointment bookings
+	panel.add(patName);
+	panel.add(patientAge);
+	panel.add(text1);
+	panel.add(patientAddress);
+	panel.add(text2);
+	panel.add(patientPhone);
+	panel.add(text3);
+	panel.add(appDate);
+	panel.add(text4);
+	panel.add(appoTime);
+	panel.add(text5);
+	panel.add(natureOfCom);
+	panel.add(text6);
+
+	
+	JPanel appTime = new JPanel(new GridLayout(5,5)); // JPanel for generating appointment times
+	JLabel ageOfPatient = new JLabel("Age of Patient");
+	JTextField patAge = new JTextField();
+	JLabel underlying = new JLabel("Underlying Conditions");
+	JTextField underlyingCon = new JTextField();
+	JLabel urgency = new JLabel("Is the appointment urgent?");
+	JTextField appUrgency = new JTextField();
+	JLabel appType = new JLabel("Appointment Type");
+	JTextField typeOfApp = new JTextField();
+	JLabel timeOfDay = new JLabel("Time of Day Booked");
+	JTextField timeDay = new JTextField();
+	appTime.add(ageOfPatient); // adding labels and text fields of critera for app time
+	appTime.add(patAge);
+	appTime.add(underlying);
+	appTime.add(underlyingCon);
+	appTime.add(urgency);
+	appTime.add(appUrgency);
+	appTime.add(appType);
+	appTime.add(typeOfApp);
+	appTime.add(timeOfDay);
+	appTime.add(timeDay);
 	
 	
-	JTextField arrived = new JTextField("Did the patient arrive?");
-	JTextField arrivalTime = new JTextField("Arrival Time");
-	JTextField appType = new JTextField("Appointment Type");
-	JTextField timeSeen = new JTextField("Time Seen");
-	JTextField timeFin = new JTextField("Time Finished");
-	JTextField timeOfYear = new JTextField("Time of Year");
-	JTextField natureOfComplaint = new JTextField("Nature of Complaint");
+		
+	JPanel buttons = new JPanel(new GridLayout(2,2)); // Panel that contains buttons with functionality
+	JButton bookApp = new JButton("Book Appointment");
+	bookApp.addActionListener(new ActionListener() { // add listener to book appointment and add to database
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");  // driver for java database connection (added by external jar)
+			String url = "jdbc:mysql://localhost:3306/medical_info"; // string for where to make connection
+			Connection con = DriverManager.getConnection(url, "root", "qwerty"); // connection address, user, password
+			PreparedStatement stmt = con.prepareStatement("insert into `medical_info` values(?,?,?,?,?,?,?)"); // statement to add values into table
+			stmt.setString(1,patName.getText());
+			stmt.setString(2,text1.getText());
+			stmt.setString(3,text2.getText());
+			stmt.setString(4,text3.getText());
+			stmt.setString(5,text4.getText()); // statements to add to table, getting text from user input in text field
+			stmt.setString(6,text5.getText());
+			stmt.setString(7,text6.getText());
+			JOptionPane.showMessageDialog(null, "Booking Confirmed"); // booking confirmation dialog
+			stmt.executeUpdate();
+	        stmt.close();  
+	        con.close();  
+		} catch (SQLException | ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
+	}
+); //change app time to app duration
+	JButton getAppTime = new JButton("Get App Time"); // the get app time is not for a specific patient, its a set of criteria that allows the receptionist to accurately predict appointment times
+	getAppTime.addActionListener(new ActionListener() { // add listener to app time button
+		public void actionPerformed(ActionEvent e) {
+			int minutes = 0; // minutes variable that will change throughout based on critera in text fields
+			
+			String getAge = patAge.getText();
+			int ageCon = Integer.parseInt(getAge);
+			String getUnderlying = underlyingCon.getText(); 
+			int uc = Integer.parseInt(getUnderlying);
+			String getUrgency = appUrgency.getText(); // variables drawn from text fields
+			String typeCon = typeOfApp.getText();
+			String timeCon = timeDay.getText();
+			
+			if(ageCon >= 65)
+			{
+				minutes = minutes +5;
+			}
+			else if(ageCon < 65 && ageCon >=35) // checking age condition
+			{
+				minutes = minutes +3;
+			}
+			else if(ageCon < 35)
+			{
+				minutes = minutes +2;
+			}
+			
+			if(uc >= 1) // checking underlying conditions
+			{
+				minutes = minutes + 4;
+			}
+			if(uc == 0)
+			{
+				minutes = minutes + 1;
+			}
+			
+			if(getUrgency.equals("yes")) // checking urgency conditions
+			{
+				minutes = minutes + 5;
+			}
+			if(getUrgency.equals("no"))
+			{
+				minutes = minutes +2;
+			}
+			
+			if(typeCon.equals("consultation")) // check type of appointment conditions
+			{
+				minutes = minutes + 3;
+			}
+			else if(typeCon.equals("covid test"))
+			{
+				minutes = minutes + 5;
+			}
+			if(timeCon.equals("morning")) // checking time of appointment conditions
+			{
+				minutes = minutes +3;
+			}
+			else if(timeCon.equals("afternoon"))
+			{
+				minutes = minutes + 4;
+			}
+			else if(timeCon.equals("evening"))
+			{
+				minutes = minutes + 2;
+			}
+			
+			JOptionPane.showMessageDialog(null, "This appointment should take " + minutes + " minutes.");
+			// show dialog of how long the appointment should take with updated minutes variable
+		}
+	});
 	
-	dataEntry.add(arrived);
-	dataEntry.add(arrivalTime);
-	dataEntry.add(appType);
-	dataEntry.add(timeSeen);
-	dataEntry.add(timeFin);
-	dataEntry.add(timeOfYear);
-	dataEntry.add(natureOfComplaint);
+	buttons.add(bookApp); // add two buttons to the gui
+	buttons.add(getAppTime);
 	
-	frame.add(comboBoxPane, BorderLayout.PAGE_START);
-	frame.add(card, BorderLayout.CENTER);
-	frame.setSize(400, 200);
+	JTextField enterPatientName = new JTextField();
+	JButton retrieveData = new JButton("Retrieve Data"); // text field and button to retrieve data back from the database
+	retrieveData.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) { 
+			
+			try {
+			Class.forName("com.mysql.cj.jdbc.Driver"); 
+			String url = "jdbc:mysql://localhost:3306/medical_info";
+			Connection con = DriverManager.getConnection(url, "root", "qwerty");
+			Statement stmt = con.createStatement(); // establish connection same as above
+			String query = "select * from medical_info where patientName = '" + enterPatientName.getText() +"'"; // query that will select all information when the patientName is input into text field
+			ResultSet resultSet = stmt.executeQuery(query); // execute query
+			
+			while(resultSet.next()) {
+				String name = resultSet.getString("patientName");
+				String age = resultSet.getString("patientAge");
+				String date = resultSet.getString("appDate"); // setting variables based on information from databse
+				String time = resultSet.getString("appTime");
+				String reason = resultSet.getString("natureComplaint");
+				JOptionPane.showMessageDialog(null, "Patient Name: " + name + " Patient Age: " + age + " Appointment Date: " + date + " Appointment Time: " + time + " Reason: " + reason);
+				// show dialog, name, age, date, time, reason
+			}
+			
+			
+			}
+			catch (SQLException | ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+		}
+	});
+	buttons.add(enterPatientName);
+	buttons.add(retrieveData); // add retrieval button and textfield to panel
+	
+	frame.setTitle("Medical Appointment System"); 
+	frame.add(title, BorderLayout.PAGE_START); // title panel to page start (top)
+	frame.add(panel, BorderLayout.LINE_START); // book app panel to line start (left)
+	frame.add(buttons, BorderLayout. PAGE_END);// buttons panel to page end (bottom)
+	frame.add(appTime, BorderLayout.LINE_END);// app time panel to line end (right)
+	frame.setSize(500, 500);
+	frame.pack();
 	frame.setVisible(true);
 	
+	
+	
 	}
-	
-	
 	
 	
 	public static void main (String [] args)
 	{
 		new MedicalGUI();
+		
+		
 	}
-
-
-
-
-	//@Override
-	/*public void itemStateChanged(ItemEvent e) {
-		
-		    CardLayout cl = (CardLayout)(card.getLayout());
-		    cl.show(card, (String)e.getItem());
-		
-		
-	}*/
-}
