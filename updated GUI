@@ -1,0 +1,248 @@
+import javax.swing.JFrame;
+import com.toedter.calendar.JCalendar;
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.Color;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.awt.event.ActionEvent;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextArea;
+
+public class test {	
+			
+	public test() {
+		
+		JFrame frmMedicalAppointmentBooking = new JFrame();	
+		JFrame login = new JFrame();
+		JButton loginButton = new JButton("push to login");
+		loginButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			login.dispose();
+			frmMedicalAppointmentBooking.setVisible(true);
+		}});
+		login.getContentPane().add(loginButton);
+		login.setSize(400,400);
+		login.setLocationRelativeTo(null);  
+		login.setVisible(true);
+
+		frmMedicalAppointmentBooking.setTitle("Medical Appointment Booking System");
+		frmMedicalAppointmentBooking.getContentPane().setLayout(null);
+		
+		JLabel registerLabel = new JLabel("Register a Patient");
+		registerLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		registerLabel.setBounds(121, 6, 156, 25);
+		frmMedicalAppointmentBooking.getContentPane().add(registerLabel);
+		
+		JLabel bookingLabel = new JLabel("Book Appointment");
+		bookingLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		bookingLabel.setBounds(121, 239, 156, 18);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingLabel);
+		
+		JLabel calendarLabel = new JLabel("Calendar");
+		calendarLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		calendarLabel.setBounds(500, 11, 90, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(calendarLabel);
+		
+		JCalendar calendar = new JCalendar();
+		calendar.setBounds(434, 30, 227, 358);
+		frmMedicalAppointmentBooking.getContentPane().add(calendar);
+		
+		JButton calendarButton = new JButton("Check Appointments");
+		calendarButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		calendarButton.setBackground(Color.GRAY);
+		calendarButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		calendarButton.setForeground(Color.BLACK);
+		calendarButton.setBounds(444, 392, 205, 32);
+		frmMedicalAppointmentBooking.getContentPane().add(calendarButton);
+		
+		JLabel patName = new JLabel("Patient Name");
+		patName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patName.setBounds(6, 30, 90, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(patName);
+		
+		JLabel patDOB = new JLabel("Date of Birth");
+		patDOB.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patDOB.setBounds(6, 60, 81, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(patDOB);
+		
+		JLabel patPhone = new JLabel("Phone Number");
+		patPhone.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patPhone.setBounds(6, 90, 101, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(patPhone);
+		
+		JLabel patEmail = new JLabel("Email Address");
+		patEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patEmail.setBounds(6, 120, 101, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(patEmail);
+		
+		JLabel patUnderlying = new JLabel("Underlying Conditions");
+		patUnderlying.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patUnderlying.setBounds(6, 146, 137, 24);
+		frmMedicalAppointmentBooking.getContentPane().add(patUnderlying);
+		
+		JTextField patF1 = new JTextField();
+		patF1.setBounds(194, 29, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(patF1);
+		patF1.setColumns(10);
+		
+		JTextField patF2 = new JTextField();
+		patF2.setBounds(194, 89, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(patF2);
+		patF2.setColumns(10);
+		
+		JTextField patF3 = new JTextField();
+		patF3.setBounds(194, 119, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(patF3);
+		patF3.setColumns(10);
+		
+		JLabel bookingName = new JLabel("Patient Name");
+		bookingName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bookingName.setBounds(6, 260, 90, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingName);
+		
+		JLabel bookingReason = new JLabel("Appointment Reason");
+		bookingReason.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bookingReason.setBounds(6, 290, 129, 18);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingReason);
+		
+		JLabel patGender = new JLabel("Gender");
+		patGender.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		patGender.setBounds(6, 180, 45, 14);
+		frmMedicalAppointmentBooking.getContentPane().add(patGender);
+		
+		JLabel bookingTime = new JLabel("Appointment Time");
+		bookingTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bookingTime.setBounds(6, 320, 115, 18);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingTime);
+		
+		JLabel bookingDate = new JLabel("Appointment Date");
+		bookingDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bookingDate.setBounds(6, 350, 115, 18);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingDate);
+		
+		JTextField bookingF1 = new JTextField();
+		bookingF1.setBounds(194, 259, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingF1);
+		bookingF1.setColumns(10);
+		
+		JTextField bookingF2 = new JTextField();
+		bookingF2.setBounds(194, 290, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingF2);
+		bookingF2.setColumns(10);
+		
+		JTextField bookingF3 = new JTextField();
+		bookingF3.setBounds(194, 321, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingF3);
+		bookingF3.setColumns(10);
+		
+		JButton registerButton = new JButton("Register");
+		registerButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		registerButton.setBounds(129, 210, 137, 23);
+		frmMedicalAppointmentBooking.getContentPane().add(registerButton);
+		
+		JButton bookingButton = new JButton("Book");
+		bookingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		bookingButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		bookingButton.setBounds(129, 383, 137, 23);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingButton);
+		
+		JDateChooser bookingGetDate = new JDateChooser();
+		bookingGetDate.setBounds(194, 350, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingGetDate);
+		
+		JComboBox patGetUC = new JComboBox();
+		patGetUC.setModel(new DefaultComboBoxModel(new String[] {"Yes", "No"}));
+		patGetUC.setBounds(194, 149, 146, 22);
+		frmMedicalAppointmentBooking.getContentPane().add(patGetUC);
+		
+		JDateChooser patGetDOB = new JDateChooser();
+		patGetDOB.setBounds(194, 59, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(patGetDOB);
+		
+		JComboBox patGetGender = new JComboBox();
+		patGetGender.setModel(new DefaultComboBoxModel(new String[] {"Male", "Female"}));
+		patGetGender.setBounds(194, 178, 146, 22);
+		frmMedicalAppointmentBooking.getContentPane().add(patGetGender);
+		
+		JButton logoutButton = new JButton("Logout");
+		logoutButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		logoutButton.setBounds(455, 515, 207, 48);
+		frmMedicalAppointmentBooking.getContentPane().add(logoutButton);
+		
+		JTextField enterName = new JTextField();
+		enterName.setBounds(6, 438, 164, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(enterName);
+		enterName.setColumns(10);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(6, 469, 346, 83);
+		textArea.setFont(textArea.getFont().deriveFont(Font.BOLD));
+		frmMedicalAppointmentBooking.getContentPane().add(textArea);
+		
+		JButton getInfoButton = new JButton("Get App Info");
+		getInfoButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		getInfoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					Class.forName("com.mysql.cj.jdbc.Driver"); 
+					String url = "jdbc:mysql://localhost:3306/medical_info";
+					Connection con = DriverManager.getConnection(url, "root", "qwerty");
+					Statement stmt = con.createStatement(); // establish connection same as above
+					String query = "select * from medical_info where patientName = '" + enterName.getText() +"'"; // query that will select all information when the patientName is input into text field
+					ResultSet resultSet = stmt.executeQuery(query); // execute query
+					
+					while(resultSet.next()) {
+						String name = resultSet.getString("patientName");
+						String age = resultSet.getString("patientAge");
+						String date = resultSet.getString("appDate"); // setting variables based on information from databse
+						String time = resultSet.getString("appTime");
+						String reason = resultSet.getString("natureComplaint");
+						textArea.setText("Patient Name: " + name + "\n Patient Age: " + age + "\n Appointment Date: " + date + "\n Appointment Time: " + time + "\n Reason: " + reason);
+						//JOptionPane.showMessageDialog(null, "Patient Name: " + name + " Patient Age: " + age + " Appointment Date: " + date + " Appointment Time: " + time + " Reason: " + reason);
+						// show dialog, name, age, date, time, reason
+					}
+					
+					
+					}
+					catch (SQLException | ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+			}
+		});
+		getInfoButton.setBounds(194, 436, 163, 23);
+		frmMedicalAppointmentBooking.getContentPane().add(getInfoButton);
+		
+		JLabel dataRetrieval = new JLabel("Retrieve Data");
+		dataRetrieval.setFont(new Font("Tahoma", Font.BOLD, 16));
+		dataRetrieval.setBounds(121, 417, 242, 18);
+		frmMedicalAppointmentBooking.getContentPane().add(dataRetrieval);
+		
+		frmMedicalAppointmentBooking.setSize(676,600);
+		//frmMedicalAppointmentBooking.setVisible(true);
+}
+		public static void main (String [] args)
+		{
+			new test();
+		}
+}
