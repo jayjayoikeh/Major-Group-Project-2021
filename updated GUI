@@ -11,13 +11,17 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import com.toedter.calendar.JDateChooser;
+
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JTextArea;
 
 public class test {	
@@ -26,19 +30,65 @@ public class test {
 		
 		JFrame frmMedicalAppointmentBooking = new JFrame();	
 		JFrame login = new JFrame();
-		JButton loginButton = new JButton("push to login");
+		JFrame records = new JFrame();
+		
+		
+		login.getContentPane().setLayout(null);
+		
+		
+		
+		
+		JLabel hseLabel = new JLabel("New label");
+		hseLabel.setIcon(new ImageIcon(test.class.getResource("/HSE.png")));
+		hseLabel.setBounds(32, 140, 264, 140);
+		login.getContentPane().add(hseLabel);
+		
+		JLabel username = new JLabel("Username");
+		username.setFont(new Font("Tahoma", Font.BOLD, 22));
+		username.setBounds(324, 162, 117, 31);
+		login.getContentPane().add(username);
+		
+		JTextField getUsername = new JTextField();
+		getUsername.setBounds(493, 162, 158, 40);
+		login.getContentPane().add(getUsername);
+		getUsername.setColumns(10);
+		
+		JLabel password = new JLabel("Password");
+		password.setFont(new Font("Tahoma", Font.BOLD, 22));
+		password.setBounds(324, 246, 135, 31);
+		login.getContentPane().add(password);
+		
+		JTextField getPassword = new JTextField();
+		getPassword.setBounds(493, 246, 158, 40);
+		login.getContentPane().add(getPassword);
+		getPassword.setColumns(10);
+		
+		JButton loginButton = new JButton("LOGIN");
+		loginButton.setFont(new Font("Tahoma", Font.BOLD, 14));
+		loginButton.setBounds(393, 317, 174, 40);
 		loginButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			login.dispose();
+				public void actionPerformed(ActionEvent e) {
+			login.setVisible(false);
 			frmMedicalAppointmentBooking.setVisible(true);
 		}});
+		
 		login.getContentPane().add(loginButton);
-		login.setSize(400,400);
-		login.setLocationRelativeTo(null);  
+		
+		JButton resetPW = new JButton("RESET PASSWORD");
+		resetPW.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		resetPW.setFont(new Font("Tahoma", Font.BOLD, 14));
+		resetPW.setBounds(393, 382, 174, 40);
+		login.getContentPane().add(resetPW);
+		login.setSize(708,470);
 		login.setVisible(true);
-
+		
+		
 		frmMedicalAppointmentBooking.setTitle("Medical Appointment Booking System");
 		frmMedicalAppointmentBooking.getContentPane().setLayout(null);
+	
 		
 		JLabel registerLabel = new JLabel("Register a Patient");
 		registerLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -59,13 +109,75 @@ public class test {
 		calendar.setBounds(434, 30, 227, 358);
 		frmMedicalAppointmentBooking.getContentPane().add(calendar);
 		
+		JTextArea calendarTA = new JTextArea();
+		calendarTA.setBounds(444, 454, 192, 32);
+		frmMedicalAppointmentBooking.getContentPane().add(calendarTA);
+		
 		JButton calendarButton = new JButton("Check Appointments");
 		calendarButton.setFont(new Font("Tahoma", Font.BOLD, 13));
 		calendarButton.setBackground(Color.GRAY);
 		calendarButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String date = calendar.getDate().toString();
+				StringBuilder build = new StringBuilder(date);
+				
+				for(int i = 0; i<13; i++)
+				{
+					int count = 10;
+					build.deleteCharAt(count);
+					count++;
+				}
+				String newDate = build.toString();
+				
+				
+				try {
+					Class.forName("com.mysql.cj.jdbc.Driver"); 
+					String url = "jdbc:mysql://localhost:3306/medical_info";
+					Connection con = DriverManager.getConnection(url, "root", "qwerty");
+					Statement stmt = con.createStatement(); // establish connection same as above
+					
+					String emptyOrNot = "select count(*) from bookings where appDate = '" + newDate + "'";
+					ResultSet empty = stmt.executeQuery(emptyOrNot);
+					empty.next();
+					int count = empty.getInt(1);
+					
+					if(count == 0)
+					{
+						JOptionPane.showMessageDialog(null, "No appointments on this date");
+					}
+					else {
+					
+					String query = "select * from bookings where appDate = '" + newDate +"'"; // query that will select all information when the patientName is input into text field
+					ResultSet resultSet = stmt.executeQuery(query); // execute query
+					
+					
+						
+					while(resultSet.next()) {
+						String name = resultSet.getString("patientName");
+						String getDate = resultSet.getString("appDate"); // setting variables based on information from databse
+						String time = resultSet.getString("appTime");
+						String reason = resultSet.getString("reason");
+						
+						
+						//calendarTA.setText("Patient Name: " + name +  "\n Appointment Date: " + getDate + "\n Appointment Time: " + time + "\n Reason: " + reason);
+						JOptionPane.showMessageDialog(null, "Patient Name: " + name +  "\n Appointment Date: " + getDate + "\n Appointment Time: " + time + "\n Reason: " + reason);
+						// show dialog, name, age, date, time, reason
+						}
+					}
+				}
+						
+						
+					catch (SQLException | ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+			
 			}
-		});
+				
+			//	calendarTA.setText(newDate);
+				
+			});
 		calendarButton.setForeground(Color.BLACK);
 		calendarButton.setBounds(444, 392, 205, 32);
 		frmMedicalAppointmentBooking.getContentPane().add(calendarButton);
@@ -94,6 +206,12 @@ public class test {
 		patUnderlying.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		patUnderlying.setBounds(6, 146, 137, 24);
 		frmMedicalAppointmentBooking.getContentPane().add(patUnderlying);
+		
+		JComboBox patGetUC = new JComboBox();
+		patGetUC.setModel(new DefaultComboBoxModel(new String[] {"None", "Asthma ", "Cancer", "Cystic Fibrosis", "Diabetes", "Heart Disease", "High/Low Blood Pressure", "Immuno-compromised", "Kidney Disease", "Liver Disease", "Lung Disease", "Multiple Sclerosis", "Obesity", "One or more of the above", "Other"}));
+		patGetUC.setBounds(194, 149, 146, 22);
+		frmMedicalAppointmentBooking.getContentPane().add(patGetUC);
+		
 		
 		JTextField patF1 = new JTextField();
 		patF1.setBounds(194, 29, 146, 20);
@@ -125,6 +243,11 @@ public class test {
 		patGender.setBounds(6, 180, 45, 14);
 		frmMedicalAppointmentBooking.getContentPane().add(patGender);
 		
+		JComboBox patGetGender = new JComboBox();
+		patGetGender.setModel(new DefaultComboBoxModel(new String[] {"Male", "Female"}));
+		patGetGender.setBounds(194, 178, 146, 22);
+		frmMedicalAppointmentBooking.getContentPane().add(patGetGender);
+		
 		JLabel bookingTime = new JLabel("Appointment Time");
 		bookingTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		bookingTime.setBounds(6, 320, 115, 18);
@@ -140,51 +263,179 @@ public class test {
 		frmMedicalAppointmentBooking.getContentPane().add(bookingF1);
 		bookingF1.setColumns(10);
 		
-		JTextField bookingF2 = new JTextField();
-		bookingF2.setBounds(194, 290, 146, 20);
-		frmMedicalAppointmentBooking.getContentPane().add(bookingF2);
-		bookingF2.setColumns(10);
+		JComboBox bookingGetReason = new JComboBox();
+		bookingGetReason.setModel(new DefaultComboBoxModel(new String[] {"Annual Wellness Check", "Cervical Screening", "Consultation", "Mental Health", "Minor Illness ", "Minor Surgery", "Phlebotomy (Blood Test)", "Postnatal Care", "Sprain/Break/Fracture", "Urgent Appointment", "Vaccinations", "Other"}));
+		bookingGetReason.setBounds(194, 290, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingGetReason);
 		
-		JTextField bookingF3 = new JTextField();
-		bookingF3.setBounds(194, 321, 146, 20);
-		frmMedicalAppointmentBooking.getContentPane().add(bookingF3);
-		bookingF3.setColumns(10);
-		
-		JButton registerButton = new JButton("Register");
-		registerButton.setFont(new Font("Tahoma", Font.BOLD, 13));
-		registerButton.setBounds(129, 210, 137, 23);
-		frmMedicalAppointmentBooking.getContentPane().add(registerButton);
-		
-		JButton bookingButton = new JButton("Book");
-		bookingButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		bookingButton.setFont(new Font("Tahoma", Font.BOLD, 13));
-		bookingButton.setBounds(129, 383, 137, 23);
-		frmMedicalAppointmentBooking.getContentPane().add(bookingButton);
-		
-		JDateChooser bookingGetDate = new JDateChooser();
-		bookingGetDate.setBounds(194, 350, 146, 20);
-		frmMedicalAppointmentBooking.getContentPane().add(bookingGetDate);
-		
-		JComboBox patGetUC = new JComboBox();
-		patGetUC.setModel(new DefaultComboBoxModel(new String[] {"Yes", "No"}));
-		patGetUC.setBounds(194, 149, 146, 22);
-		frmMedicalAppointmentBooking.getContentPane().add(patGetUC);
+		JComboBox bookingGetTime = new JComboBox();
+		bookingGetTime.setModel(new DefaultComboBoxModel(new String[] {"9:00", "9:15", "9:30", "9:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45"}));
+		bookingGetTime.setBounds(194, 321, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingGetTime);
 		
 		JDateChooser patGetDOB = new JDateChooser();
 		patGetDOB.setBounds(194, 59, 146, 20);
 		frmMedicalAppointmentBooking.getContentPane().add(patGetDOB);
 		
-		JComboBox patGetGender = new JComboBox();
-		patGetGender.setModel(new DefaultComboBoxModel(new String[] {"Male", "Female"}));
-		patGetGender.setBounds(194, 178, 146, 22);
-		frmMedicalAppointmentBooking.getContentPane().add(patGetGender);
+		JButton registerButton = new JButton("Register");
+		registerButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		registerButton.setBounds(129, 210, 137, 23);
+		
+		registerButton.addActionListener(new ActionListener() { // add listener to book appointment and add to database
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+					
+				
+				if(patF1.getText().isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a name");
+				}
+				
+				else if(patF2.getText().isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a phone number");
+				}
+				
+				else if(patF3.getText().isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "Please enter an email address");
+				}
+				
+				else if(patGetDOB.getDate() == null)
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a date of birth");
+				}
+				
+				else {
+					
+				
+					try {
+						Class.forName("com.mysql.cj.jdbc.Driver");  // driver for java database connection (added by external jar)
+						String url = "jdbc:mysql://localhost:3306/medical_info"; // string for where to make connection
+						Connection con = DriverManager.getConnection(url, "root", "qwerty"); // connection address, user, password
+						PreparedStatement stmt = con.prepareStatement("insert into `medical_info` values(?,?,?,?,?,?)"); // statement to add values into table
+						stmt.setString(1,patF1.getText());
+						String date = patGetDOB.getDate().toString();
+						StringBuilder build = new StringBuilder(date);
+							
+						for(int i = 0; i<13; i++) 
+						{
+							int count = 10;
+							build.deleteCharAt(count);
+							count++;
+						}
+						String newDate = build.toString();
+						stmt.setString(2,newDate);
+						stmt.setString(3,patF2.getText());
+						stmt.setString(4,patF3.getText());
+						String underlying = String.valueOf(patGetUC.getSelectedItem());
+						stmt.setString(5,underlying); 
+						String gender = String.valueOf(patGetGender.getSelectedItem());
+						stmt.setString(6,gender);
+						JOptionPane.showMessageDialog(null, "Patient Registered"); 
+						stmt.executeUpdate();
+						stmt.close();  
+						con.close();  
+					} catch (SQLException | ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+				
+		
+	});
+		frmMedicalAppointmentBooking.getContentPane().add(registerButton);
+		
+		JDateChooser bookingGetDate = new JDateChooser();
+		bookingGetDate.setBounds(194, 350, 146, 20);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingGetDate);
+		
+		
+		JButton bookingButton = new JButton("Book");
+		bookingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(bookingF1.getText().isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a name");
+				}
+				
+				else if(bookingGetDate.getDate() == null)
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a date");
+				}
+				else {
+					try {
+						Class.forName("com.mysql.cj.jdbc.Driver");  // driver for java database connection (added by external jar)
+						String url = "jdbc:mysql://localhost:3306/medical_info"; // string for where to make connection
+						Connection con = DriverManager.getConnection(url, "root", "qwerty"); // connection address, user, password
+						Statement stmt1 = con.createStatement(); // establish connection same as above
+						String checkName = bookingF1.getText();
+						String isRegistered = "select count(*) from medical_info where patientName = '" + checkName + "'";
+						ResultSet empty = stmt1.executeQuery(isRegistered);
+						empty.next();
+						int check = empty.getInt(1);
+						
+						if(check == 0)
+						{
+							JOptionPane.showMessageDialog(null, "This patient is not registered \n Please register before booking");
+						}
+						else {
+						
+						
+							PreparedStatement stmt = con.prepareStatement("insert into `bookings` values(?,?,?,?)"); // statement to add values into table
+							stmt.setString(1,bookingF1.getText());
+							String reason = String.valueOf(bookingGetReason.getSelectedItem());
+							stmt.setString(2,reason);
+							String time = String.valueOf(bookingGetTime.getSelectedItem());
+							stmt.setString(3,time);
+							String date = bookingGetDate.getDate().toString();
+							StringBuilder build = new StringBuilder(date);
+							
+							for(int i = 0; i<13; i ++)
+							{
+								int count = 10;
+								build.deleteCharAt(count);
+								count++;
+							}
+							String newDate = build.toString();
+							stmt.setString(4,newDate);
+							
+							JOptionPane.showMessageDialog(null, "Booking Confirmed"); // booking confirmation dialog
+							stmt.executeUpdate();
+					        stmt.close();  
+					        con.close(); 
+						}
+					} catch (SQLException | ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				}
+			}
+		});
+				
+			
+		
+		bookingButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		bookingButton.setBounds(6, 383, 137, 23);
+		frmMedicalAppointmentBooking.getContentPane().add(bookingButton);
+		
+	
+		
 		
 		JButton logoutButton = new JButton("Logout");
 		logoutButton.setFont(new Font("Tahoma", Font.BOLD, 13));
 		logoutButton.setBounds(455, 515, 207, 48);
+		logoutButton.addActionListener(new ActionListener() {
+				public void actionPerformed (ActionEvent e)
+				{
+					frmMedicalAppointmentBooking.setVisible(false);
+					login.setVisible(true);
+				}
+			
+				});
 		frmMedicalAppointmentBooking.getContentPane().add(logoutButton);
 		
 		JTextField enterName = new JTextField();
@@ -202,32 +453,53 @@ public class test {
 		getInfoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				if(enterName.getText().isEmpty())
+				{
+					JOptionPane.showMessageDialog(null, "Please enter a name");
+				}
+				
+				else {
 				try {
 					Class.forName("com.mysql.cj.jdbc.Driver"); 
 					String url = "jdbc:mysql://localhost:3306/medical_info";
 					Connection con = DriverManager.getConnection(url, "root", "qwerty");
 					Statement stmt = con.createStatement(); // establish connection same as above
-					String query = "select * from medical_info where patientName = '" + enterName.getText() +"'"; // query that will select all information when the patientName is input into text field
-					ResultSet resultSet = stmt.executeQuery(query); // execute query
 					
-					while(resultSet.next()) {
-						String name = resultSet.getString("patientName");
-						String age = resultSet.getString("patientAge");
-						String date = resultSet.getString("appDate"); // setting variables based on information from databse
-						String time = resultSet.getString("appTime");
-						String reason = resultSet.getString("natureComplaint");
-						textArea.setText("Patient Name: " + name + "\n Patient Age: " + age + "\n Appointment Date: " + date + "\n Appointment Time: " + time + "\n Reason: " + reason);
-						//JOptionPane.showMessageDialog(null, "Patient Name: " + name + " Patient Age: " + age + " Appointment Date: " + date + " Appointment Time: " + time + " Reason: " + reason);
-						// show dialog, name, age, date, time, reason
+					String incorrectName = "select count(*) from bookings where patientName = '"  + enterName.getText() + "'";
+
+					ResultSet wrongName = stmt.executeQuery(incorrectName);
+					wrongName.next();
+					int check = wrongName.getInt(1);
+					
+					if(check == 0)
+					{
+						JOptionPane.showMessageDialog(null, "No booking with this name \n Please re-enter a name");
 					}
-					
-					
-					}
+					else {
+						String query = "select * from bookings where patientName = '" + enterName.getText() +"'"; // query that will select all information when the patientName is input into text field
+						ResultSet resultSet = stmt.executeQuery(query); // execute query
+						
+						while(resultSet.next()) {
+							String name = resultSet.getString("patientName");
+							String date = resultSet.getString("appDate"); // setting variables based on information from databse
+							String time = resultSet.getString("appTime");
+							String reason = resultSet.getString("reason");
+							textArea.setText("Patient Name: " + name +  "\n Appointment Date: " + date + "\n Appointment Time: " + time + "\n Reason: " + reason);
+							//JOptionPane.showMessageDialog(null, "Patient Name: " + name + " Patient Age: " + age + " Appointment Date: " + date + " Appointment Time: " + time + " Reason: " + reason);
+							// show dialog, name, age, date, time, reason
+						}
+						
+						
+						}
+				}
+				
 					catch (SQLException | ClassNotFoundException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				
+				
+				}
 			}
 		});
 		getInfoButton.setBounds(194, 436, 163, 23);
@@ -237,6 +509,21 @@ public class test {
 		dataRetrieval.setFont(new Font("Tahoma", Font.BOLD, 16));
 		dataRetrieval.setBounds(121, 417, 242, 18);
 		frmMedicalAppointmentBooking.getContentPane().add(dataRetrieval);
+		
+		JTextArea textArea_1 = new JTextArea();
+		textArea_1.setBounds(444, 454, 192, 32);
+		frmMedicalAppointmentBooking.getContentPane().add(textArea_1);
+		
+		JButton recordsButton = new JButton("Add a Record");
+		recordsButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+		recordsButton.setBounds(203, 381, 137, 23);
+		recordsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				records.setVisible(true);
+			}
+			});
+		
+		frmMedicalAppointmentBooking.getContentPane().add(recordsButton);
 		
 		frmMedicalAppointmentBooking.setSize(676,600);
 		//frmMedicalAppointmentBooking.setVisible(true);
