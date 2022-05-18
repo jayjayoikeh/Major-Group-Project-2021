@@ -53,11 +53,11 @@ public class Medicalapp {
 	
 	static final String MED_DB_NAME = "medical_info";
 	static final String MED_DB_USER = "root";
-	static final String MED_DB_PASSWORD = "admin1234";
+	static final String MED_DB_PASSWORD = "root1997";
 	
 	static final String FIRST_DB_NAME = "firstDatabase";
 	static final String FIRST_DB_USER = "root";
-	static final String FIRST_DB_PASSWORD = "admin1234";
+	static final String FIRST_DB_PASSWORD = "root1997";
 	
 	
 	DateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -1740,7 +1740,7 @@ public class Medicalapp {
 		 try 
 		 {
 			 Class.forName("com.mysql.cj.jdbc.Driver"); // driver for java database connection (added by external jar)
-			 String url = "jdbc:mysql://localhost:3306/"+MED_DB_NAME+"?allowPublicKeyRetrieval=true&useSSL=FALSE"; // string for where to make connection
+			 String url = "jdbc:mysql://localhost:3306/"+MED_DB_NAME+"?allowPublicKeyRetrieval=true&useSSL=FALSE&serverTimezone=UTC"; // string for where to make connection
 			 return DriverManager.getConnection(url, MED_DB_USER, MED_DB_PASSWORD);
 
 		} catch (SQLException e) {
@@ -1755,7 +1755,7 @@ public class Medicalapp {
 		 try 
 		 {
 			 Class.forName("com.mysql.cj.jdbc.Driver"); 
-			 String url = "jdbc:mysql://localhost:3306/"+FIRST_DB_NAME+"?allowPublicKeyRetrieval=true&useSSL=FALSE";
+			 String url = "jdbc:mysql://localhost:3306/"+FIRST_DB_NAME+"?allowPublicKeyRetrieval=true&useSSL=FALSE&serverTimezone=UTC";
 			 return DriverManager.getConnection(url, FIRST_DB_USER, FIRST_DB_PASSWORD);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1775,7 +1775,7 @@ public class Medicalapp {
 	    	   //Pufferung des Bildes
 	    	   myPicture = ImageIO.read(imageFile);
 	    	   
-	    	   //Rückgabe als Bildsymbol.
+	    	   //RÃ¼ckgabe als Bildsymbol.
 			   return new ImageIcon(myPicture);
 			}catch (IOException e) {
 				e.printStackTrace();
